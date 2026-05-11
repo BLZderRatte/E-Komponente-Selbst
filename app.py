@@ -80,7 +80,7 @@ component_info = {
     "LED": "Lichtemittierende Diode. Wandelt Strom direkt in Licht um. Hauptanwendung: Beleuchtung und optische Anzeigen.",
     "Transformator": "Überträgt Energie durch elektromagnetische Induktion. Hauptsächlich zur Spannungswandlung und galvanischen Trennung.",
     "Transistor": "Aktives Bauelement zur Verstärkung und Schaltung von Signalen. Grundlage aller modernen Elektronik.",
-    "Widerstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
+    "Wiederstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
 }
 
 component_examples = {
@@ -90,10 +90,10 @@ component_examples = {
     "LED": "• Leuchtanzeigen\n• Arduino-Projekte\n• Lauflichter",
     "Transformator": "• Steckernetzteile\n• Audio-Übertrager\n• Isolierte Versorgungen",
     "Transistor": "• Signalverstärker\n• Motorsteuerung\n• Schaltstufen",
-    "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung\n• Pull-up/Pull-down"
+    "Wiederstand": "• Spannungsteiler\n• LED-Strombegrenzung\n• Pull-up/Pull-down"
 }
 
-# Farbring-Farben für Widerstand
+# Farbring-Rechner für Widerstand
 color_options = ["Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
 color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5, "Blau":6, "Violett":7, "Grau":8, "Weiß":9}
 multiplier_values = {"Schwarz":1, "Braun":10, "Rot":100, "Orange":1000, "Gelb":10000, "Grün":100000, "Blau":1000000, "Gold":0.1, "Silber":0.01}
@@ -123,7 +123,7 @@ if uploaded_file is not None:
     confidence = float(predictions[0][predicted_idx]) * 100
     predicted_label = class_names[predicted_idx]
 
-    # Ergebnis
+    # === ERGEBNISSE ===
     if confidence >= 75:
         st.success(f"**ERKANNTE KOMPONENTE:** {predicted_label.upper()}")
     elif confidence >= 50:
@@ -142,19 +142,18 @@ if uploaded_file is not None:
     st.info(component_examples.get(predicted_label, "Keine Beispiele verfügbar."))
 
     # ====================== WIDERSTANDS-RECHNER ======================
-    if predicted_label == "Widerstand":
+    if predicted_label == "Wiederstand":
         st.subheader("🎨 Widerstands-Farbring-Code Rechner (4-Band)")
         
         col1, col2, col3, col4 = st.columns(4)
-        
         with col1:
-            band1 = st.selectbox("Band 1 (1. Ziffer)", color_options, index=1)
+            band1 = st.selectbox("Band 1 (1. Ziffer)", color_options, index=1, key="band1")
         with col2:
-            band2 = st.selectbox("Band 2 (2. Ziffer)", color_options, index=0)
+            band2 = st.selectbox("Band 2 (2. Ziffer)", color_options, index=0, key="band2")
         with col3:
-            band3 = st.selectbox("Band 3 (Multiplikator)", ["Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"])
+            band3 = st.selectbox("Band 3 (Multiplikator)", ["Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"], key="band3")
         with col4:
-            band4 = st.selectbox("Band 4 (Toleranz)", ["Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)", "Keine"])
+            band4 = st.selectbox("Band 4 (Toleranz)", ["Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"], key="band4")
 
         if st.button("🔢 Widerstand berechnen", type="primary"):
             try:
@@ -168,21 +167,17 @@ if uploaded_file is not None:
                 
                 resistance = (digit1 * 10 + digit2) * multiplier
                 
-                # Formatierung
                 if resistance >= 1000000:
                     value_str = f"{resistance/1000000:.2f} MΩ"
                 elif resistance >= 1000:
                     value_str = f"{resistance/1000:.2f} kΩ"
                 else:
-                    value_str = f"{resistance} Ω"
+                    value_str = f"{int(resistance)} Ω"
                 
                 st.success(f"**Widerstandswert:** {value_str}")
-                
-                tolerance = band4.split(" ")[0] if "±" not in band4 else band4
-                st.info(f"Toleranz: {tolerance}")
-                
+                st.info(f"Toleranz: {band4}")
             except:
-                st.error("Fehler bei der Berechnung. Bitte Farben prüfen.")
+                st.error("Fehler bei der Berechnung.")
 
     st.caption(f"Analyse durchgeführt um {datetime.now().strftime('%H:%M:%S')} Uhr")
 
