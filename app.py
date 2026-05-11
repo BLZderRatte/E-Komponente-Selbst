@@ -11,45 +11,62 @@ st.set_page_config(
     layout="centered"
 )
 
-# Giftgrünes Dark-Cyber Design
+# Verbessertes Giftgrün Dark-Cyber Design
 st.markdown("""
     <style>
     .stApp {
         background-color: #0a0a0a;
         color: #39ff14;
     }
-    h1, h2, h3 {
+    h1, h2, h3, .stMarkdown, label {
         color: #39ff14 !important;
         font-family: 'Courier New', monospace;
     }
-    .stMarkdown, label {
-        color: #39ff14 !important;
-    }
+    
+    /* Buttons */
     .stButton>button {
         background-color: #0a0a0a;
         color: #39ff14;
         border: 2px solid #39ff14;
         border-radius: 8px;
         font-weight: bold;
+        transition: all 0.3s;
     }
     .stButton>button:hover {
         background-color: #39ff14;
         color: #0a0a0a;
         box-shadow: 0 0 15px #39ff14;
     }
+    
+    /* Upload-Bereich */
     .stFileUploader {
         background-color: #111111;
         border: 2px dashed #39ff14;
         border-radius: 12px;
         padding: 20px;
     }
-    /* Grüne Konfidenz-Metrik */
+    
+    /* Grüne Konfidenz */
     .stMetricValue {
         color: #39ff14 !important;
+        font-size: 1.8rem !important;
     }
-    .stSuccess, .stWarning, .stError {
-        background-color: #111111;
+    
+    /* Grüner Info-Bereich (Technische Funktion) */
+    .stAlert, .stInfo {
+        background-color: #111111 !important;
+        color: #39ff14 !important;
         border-left: 5px solid #39ff14;
+    }
+    
+    /* Bar Chart Bereich */
+    .stBarChart {
+        background-color: #111111;
+    }
+    
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: #0f0f0f;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -120,11 +137,11 @@ if uploaded_file is not None:
     
     st.metric(label="**KONFIDENZ**", value=f"{confidence:.1f}%")
     
-    # Wissenschaftliche Erklärung
+    # Technische Funktion (jetzt grün)
     st.subheader("Technische Funktion")
     st.info(component_info.get(predicted_label, "Keine Beschreibung verfügbar."))
     
-    # Wahrscheinlichkeitsverteilung
+    # Wahrscheinlichkeitsverteilung (grün)
     st.subheader("Wahrscheinlichkeitsverteilung")
     prob_dict = {name: float(p * 100) for name, p in zip(class_names, predictions[0])}
     st.bar_chart(prob_dict, use_container_width=True)
