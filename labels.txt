@@ -1,7 +1,0 @@
-0 Diode
-1 Induktor
-2 Kondensator
-3 LED
-4 Transformator
-5 Transistor
-6 Wiederstand
