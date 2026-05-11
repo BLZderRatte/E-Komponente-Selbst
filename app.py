@@ -93,10 +93,11 @@ component_examples = {
     "Wiederstand": "• Spannungsteiler\n• LED-Strombegrenzung\n• Pull-up/Pull-down"
 }
 
-# Farbring-Rechner für Widerstand
-color_options = ["Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
+# ====================== FARBRING RECHNER ======================
+color_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
 color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5, "Blau":6, "Violett":7, "Grau":8, "Weiß":9}
-multiplier_values = {"Schwarz":1, "Braun":10, "Rot":100, "Orange":1000, "Gelb":10000, "Grün":100000, "Blau":1000000, "Gold":0.1, "Silber":0.01}
+multiplier_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"]
+tolerance_options = ["— Ignorieren —", "Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)", "Grün (±0.5%)", "Blau (±0.25%)"]
 
 # ====================== UPLOAD & ANALYSE ======================
 uploaded_file = st.file_uploader(
@@ -133,51 +134,64 @@ if uploaded_file is not None:
     
     st.metric(label="**KONFIDENZ**", value=f"{confidence:.1f}%")
     
-    # Technische Funktion
     st.subheader("Technische Funktion")
     st.info(component_info.get(predicted_label, "Keine Beschreibung verfügbar."))
     
-    # Praktische Beispiele
     st.subheader("Praktische Anwendungsbeispiele")
     st.info(component_examples.get(predicted_label, "Keine Beispiele verfügbar."))
 
     # ====================== WIDERSTANDS-RECHNER ======================
     if predicted_label == "Wiederstand":
-        st.subheader("🎨 Widerstands-Farbring-Code Rechner (4-Band)")
+        st.subheader("🎨 Widerstands-Farbring-Code Rechner")
         
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            band1 = st.selectbox("Band 1 (1. Ziffer)", color_options, index=1, key="band1")
-        with col2:
-            band2 = st.selectbox("Band 2 (2. Ziffer)", color_options, index=0, key="band2")
-        with col3:
-            band3 = st.selectbox("Band 3 (Multiplikator)", ["Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"], key="band3")
-        with col4:
-            band4 = st.selectbox("Band 4 (Toleranz)", ["Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"], key="band4")
+        band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True)
+        
+        cols = st.columns(6)
+        
+        band1 = cols[0].selectbox("Band 1 (1. Ziffer)", color_options, index=1)
+        band2 = cols[1].selectbox("Band 2 (2. Ziffer)", color_options, index=1)
+        band3 = cols[2].selectbox("Band 3 (3. Ziffer / Ignorieren bei 4-Band)", color_options, index=0)
+        band4 = cols[3].selectbox("Band 4 (Multiplikator)", multiplier_options, index=1)
+        band5 = cols[4].selectbox("Band 5 (Toleranz)", tolerance_options, index=1)
+        band6 = cols[5].selectbox("Band 6 (Temp.-Koeffizient)", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)", "Orange (15 ppm)", "Gelb (25 ppm)"], index=0)
 
         if st.button("🔢 Widerstand berechnen", type="primary"):
             try:
-                digit1 = color_values[band1]
-                digit2 = color_values[band2]
+                # Ziffern sammeln
+                digits = []
+                for b in [band1, band2, band3]:
+                    if b != "— Ignorieren —":
+                        digits.append(color_values[b])
                 
-                if band3 in ["Gold", "Silber"]:
-                    multiplier = multiplier_values[band3]
+                if len(digits) < 2:
+                    st.error("Mindestens zwei Ziffern-Bänder erforderlich.")
                 else:
-                    multiplier = 10 ** color_values[band3]
-                
-                resistance = (digit1 * 10 + digit2) * multiplier
-                
-                if resistance >= 1000000:
-                    value_str = f"{resistance/1000000:.2f} MΩ"
-                elif resistance >= 1000:
-                    value_str = f"{resistance/1000:.2f} kΩ"
-                else:
-                    value_str = f"{int(resistance)} Ω"
-                
-                st.success(f"**Widerstandswert:** {value_str}")
-                st.info(f"Toleranz: {band4}")
-            except:
-                st.error("Fehler bei der Berechnung.")
+                    # Wert berechnen
+                    significant = int(''.join(map(str, digits)))
+                    multiplier = 10 ** color_values[band4] if band4 != "— Ignorieren —" else 1
+                    
+                    if band4 in ["Gold", "Silber"]:
+                        multiplier = 0.1 if band4 == "Gold" else 0.01
+                    
+                    resistance = significant * multiplier
+                    
+                    # Formatierung
+                    if resistance >= 1000000:
+                        value_str = f"{resistance/1000000:.2f} MΩ"
+                    elif resistance >= 1000:
+                        value_str = f"{resistance/1000:.2f} kΩ"
+                    else:
+                        value_str = f"{int(resistance)} Ω"
+                    
+                    st.success(f"**Widerstandswert:** {value_str}")
+                    
+                    if band5 != "— Ignorieren —":
+                        st.info(f"**Toleranz:** {band5}")
+                    if band6 != "— Ignorieren —":
+                        st.info(f"**Temperaturkoeffizient:** {band6}")
+                        
+            except Exception as e:
+                st.error(f"Berechnungsfehler: {e}")
 
     st.caption(f"Analyse durchgeführt um {datetime.now().strftime('%H:%M:%S')} Uhr")
 
