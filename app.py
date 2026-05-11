@@ -11,7 +11,6 @@ st.set_page_config(
     layout="centered"
 )
 
-# Giftgrünes Dark-Cyber Design
 st.markdown("""
     <style>
     .stApp {
@@ -73,7 +72,7 @@ def load_labels():
 
 class_names = load_labels()
 
-# ====================== WISSENSCHAFTLICHE BESCHREIBUNGEN ======================
+# ====================== KOMPONENTEN-INFORMATIONEN ======================
 component_info = {
     "Diode": "Ermöglicht den Stromfluss nur in eine Richtung. Wird zur Gleichrichtung von Wechselstrom und als Schutzdiode eingesetzt.",
     "Induktor": "Speichert Energie in einem magnetischen Feld. Wird in Schaltnetzteilen, Filtern und zur Entstörung verwendet.",
@@ -81,19 +80,23 @@ component_info = {
     "LED": "Lichtemittierende Diode. Wandelt Strom direkt in Licht um. Hauptanwendung: Beleuchtung und optische Anzeigen.",
     "Transformator": "Überträgt Energie durch elektromagnetische Induktion. Hauptsächlich zur Spannungswandlung und galvanischen Trennung.",
     "Transistor": "Aktives Bauelement zur Verstärkung und Schaltung von Signalen. Grundlage aller modernen Elektronik.",
-    "Widerstand": "Begrenzt den Stromfluss nach dem ohmschen Gesetz. Wird zur Strombegrenzung und Spannungsteilung eingesetzt."
+    "Widerstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
 }
 
-# ====================== PRAKTISCHE ANWENDUNGSBEISPIELE ======================
 component_examples = {
-    "Diode": "• Einweggleichrichter für Netzteile\n• Freilaufdiode bei Relais und Motoren\n• Logikgatter (UND/OR)",
-    "Induktor": "• LC-Filter und Tiefpassfilter\n• DC-DC-Wandler (Buck/Boost)\n• Schwingkreise und Oszillatoren",
-    "Kondensator": "• 555-Timer Schaltungen\n• Netzteil-Glättung\n• Hochpass- und Tiefpassfilter",
-    "LED": "• Einfache Leuchtdioden-Anzeige\n• Ampelschaltung mit Arduino\n• Lauflichter und 7-Segment Displays",
-    "Transformator": "• Steckernetzteile (230V → 12V)\n• Audio-Übertrager\n• Isolierte Stromversorgungen",
-    "Transistor": "• Einfacher Verstärker\n• Schalttransistor für Motoren/Relais\n• Darlington-Paar oder H-Brücke",
-    "Widerstand": "• Spannungsteiler\n• Strombegrenzung für LEDs\n• Pull-up/Pull-down Widerstände"
+    "Diode": "• Einweggleichrichter\n• Freilaufdiode bei Motoren\n• Logikschaltungen",
+    "Induktor": "• DC-DC-Wandler\n• LC-Filter\n• Schwingkreise",
+    "Kondensator": "• Netzteil-Glättung\n• 555-Timer\n• Hoch-/Tiefpassfilter",
+    "LED": "• Leuchtanzeigen\n• Arduino-Projekte\n• Lauflichter",
+    "Transformator": "• Steckernetzteile\n• Audio-Übertrager\n• Isolierte Versorgungen",
+    "Transistor": "• Signalverstärker\n• Motorsteuerung\n• Schaltstufen",
+    "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung\n• Pull-up/Pull-down"
 }
+
+# Farbring-Farben für Widerstand
+color_options = ["Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
+color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5, "Blau":6, "Violett":7, "Grau":8, "Weiß":9}
+multiplier_values = {"Schwarz":1, "Braun":10, "Rot":100, "Orange":1000, "Gelb":10000, "Grün":100000, "Blau":1000000, "Gold":0.1, "Silber":0.01}
 
 # ====================== UPLOAD & ANALYSE ======================
 uploaded_file = st.file_uploader(
@@ -106,7 +109,6 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Hochgeladenes Bild", use_column_width=True)
     
-    # Vorverarbeitung
     size = (224, 224)
     image_resized = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
     
@@ -114,7 +116,6 @@ if uploaded_file is not None:
     img_array = np.expand_dims(img_array, axis=0)
     img_array = img_array / 255.0
     
-    # Inference
     with st.spinner("Analysiere mit neuronalem Netz..."):
         predictions = model.predict(img_array, verbose=0)
     
@@ -136,9 +137,52 @@ if uploaded_file is not None:
     st.subheader("Technische Funktion")
     st.info(component_info.get(predicted_label, "Keine Beschreibung verfügbar."))
     
-    # Praktische Beispiele (neu)
+    # Praktische Beispiele
     st.subheader("Praktische Anwendungsbeispiele")
     st.info(component_examples.get(predicted_label, "Keine Beispiele verfügbar."))
+
+    # ====================== WIDERSTANDS-RECHNER ======================
+    if predicted_label == "Widerstand":
+        st.subheader("🎨 Widerstands-Farbring-Code Rechner (4-Band)")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            band1 = st.selectbox("Band 1 (1. Ziffer)", color_options, index=1)
+        with col2:
+            band2 = st.selectbox("Band 2 (2. Ziffer)", color_options, index=0)
+        with col3:
+            band3 = st.selectbox("Band 3 (Multiplikator)", ["Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"])
+        with col4:
+            band4 = st.selectbox("Band 4 (Toleranz)", ["Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)", "Keine"])
+
+        if st.button("🔢 Widerstand berechnen", type="primary"):
+            try:
+                digit1 = color_values[band1]
+                digit2 = color_values[band2]
+                
+                if band3 in ["Gold", "Silber"]:
+                    multiplier = multiplier_values[band3]
+                else:
+                    multiplier = 10 ** color_values[band3]
+                
+                resistance = (digit1 * 10 + digit2) * multiplier
+                
+                # Formatierung
+                if resistance >= 1000000:
+                    value_str = f"{resistance/1000000:.2f} MΩ"
+                elif resistance >= 1000:
+                    value_str = f"{resistance/1000:.2f} kΩ"
+                else:
+                    value_str = f"{resistance} Ω"
+                
+                st.success(f"**Widerstandswert:** {value_str}")
+                
+                tolerance = band4.split(" ")[0] if "±" not in band4 else band4
+                st.info(f"Toleranz: {tolerance}")
+                
+            except:
+                st.error("Fehler bei der Berechnung. Bitte Farben prüfen.")
 
     st.caption(f"Analyse durchgeführt um {datetime.now().strftime('%H:%M:%S')} Uhr")
 
