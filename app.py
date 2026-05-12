@@ -247,7 +247,7 @@ else:
         <div class="terminal neon-border">
             <p>> INITIALIZING NEURAL SCAN INTERFACE...</p>
             <p>> WAITING FOR TARGET IMAGE UPLOAD...</p>
-            <p>> SYSTEM ARMED AND READY FOR BREACH</p>
+            <p>> SYSTEM ARMED AND READY FOR DETECTION</p>
         </div>
     """, unsafe_allow_html=True)
 
