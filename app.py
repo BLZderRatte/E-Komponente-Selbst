@@ -19,7 +19,6 @@ st.markdown("""
     }
     
     h1, h2, h3 {
-        font-family: 'VT323', monospace;
         text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
         animation: glitch 1.8s infinite;
     }
@@ -28,10 +27,9 @@ st.markdown("""
         0% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
         20% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
         40% { text-shadow: 2px 0 #00ff41, -2px 0 #ffff00; }
-        100% { text-shadow: 0 0 20px #00ff41; }
+        100% { text-shadow: 0 0 25px #00ff41; }
     }
     
-    /* Matrix Scanlines */
     .stApp::before {
         content: "";
         position: fixed;
@@ -43,36 +41,29 @@ st.markdown("""
     }
     @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
     
-    /* Neon Hacker Box */
     .hacker-box {
-        background: rgba(0, 30, 0, 0.85);
+        background: rgba(0, 25, 0, 0.9);
         border: 2px solid #00ff41;
-        box-shadow: 0 0 15px #00ff41, 0 0 35px #00ff41;
+        box-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
         padding: 20px;
         border-radius: 8px;
-        margin-bottom: 15px;
-        animation: pulse 2s infinite alternate;
+        margin: 12px 0;
+        animation: pulse 2.5s infinite alternate;
     }
     
     @keyframes pulse { 
-        from { box-shadow: 0 0 10px #00ff41; } 
-        to { box-shadow: 0 0 35px #00ff41; } 
+        from { box-shadow: 0 0 15px #00ff41; } 
+        to { box-shadow: 0 0 45px #00ff41; } 
     }
     
-    /* Restliche Styles (Selectbox, Button, Uploader etc.) */
-    .stFileUploader { background: #000000 !important; border: 2px dashed #00ff41 !important; border-radius: 8px; padding: 25px !important; }
-    .stButton>button {
-        background-color: #000000;
-        color: #00ff41;
-        border: 2px solid #00ff41;
-        font-size: 1.2em;
-        padding: 10px 25px;
-        box-shadow: 0 0 15px #00ff41;
-    }
-    .stButton>button:hover {
-        background-color: #00ff41;
-        color: #000000;
-        box-shadow: 0 0 30px #ffff00;
+    .result-box {
+        background: rgba(0, 40, 0, 0.95);
+        border: 3px solid #00ff41;
+        box-shadow: 0 0 30px #00ff41;
+        padding: 25px;
+        border-radius: 8px;
+        text-align: center;
+        margin: 15px 0;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -94,7 +85,7 @@ def load_labels():
 
 class_names = load_labels()
 
-# ====================== KOMPONENTEN DATEN ======================
+# ====================== DATEN ======================
 component_info = {
     "Diode": "Ermöglicht den Stromfluss nur in eine Richtung. Wird zur Gleichrichtung von Wechselstrom und als Schutzdiode eingesetzt.",
     "Induktor": "Speichert Energie in einem magnetischen Feld. Wird in Schaltnetzteilen, Filtern und zur Entstörung verwendet.",
@@ -115,13 +106,13 @@ component_examples = {
     "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung"
 }
 
-# ====================== FARBRING RECHNER ======================
+# Farbring Rechner
 color_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
 color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5, "Blau":6, "Violett":7, "Grau":8, "Weiß":9}
 multiplier_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"]
 tolerance_options = ["— Ignorieren —", "Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"]
 
-# ====================== UPLOAD & ANALYSE ======================
+# ====================== UPLOAD ======================
 uploaded_file = st.file_uploader("**UPLOAD IMAGE TO ANALYZE**", type=["jpg", "jpeg", "png", "webp"])
 
 if uploaded_file is not None:
@@ -141,16 +132,15 @@ if uploaded_file is not None:
     confidence = float(predictions[0][predicted_idx]) * 100
     predicted_label = class_names[predicted_idx]
 
-    if confidence >= 75:
-        st.success(f"**BREACH SUCCESSFUL → {predicted_label.upper()}**")
-    elif confidence >= 50:
-        st.warning(f"**PARTIAL BREACH → {predicted_label.upper()}**")
-    else:
-        st.error(f"**BREACH COMPROMISED → {predicted_label.upper()}**")
-    
-    st.metric("**CONFIDENCE LEVEL**", f"{confidence:.1f}%")
+    # === EPISCHE ERGEBNIS-BOX ===
+    st.markdown(f"""
+    <div class="result-box">
+        <h2>BREACH SUCCESSFUL</h2>
+        <h3>{predicted_label.upper()}</h3>
+        <p>CONFIDENCE: {confidence:.1f}%</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # === HACKER BOXES ===
     col1, col2 = st.columns([1, 1])
     with col1:
         st.subheader("TECHNISCHE SPEZIFIKATION")
@@ -202,10 +192,14 @@ if uploaded_file is not None:
     st.caption(f"**SYSTEM LOG:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — NEON VOID ONLINE")
 
 else:
+    # Schöner Startbildschirm
     st.markdown("""
-        <div class="neon-border" style="text-align:center; padding:40px;">
+        <div class="neon-border" style="text-align:center; padding:50px; margin-top:30px;">
+            <h2>> NEURAL INTERFACE ONLINE</h2>
             <p>> WAITING FOR TARGET IMAGE UPLOAD...</p>
-            <p>> SYSTEM ARMED AND READY FOR BREACH</p>
+            <p>> SYSTEM READY FOR BREACH</p>
+            <br>
+            <p style="color:#ffff00;">Lade ein Foto einer elektrotechnischen Komponente hoch</p>
         </div>
     """, unsafe_allow_html=True)
 
