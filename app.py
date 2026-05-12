@@ -8,7 +8,6 @@ import time
 # ====================== REVOLUTIONÄRES HACKER UI ======================
 st.set_page_config(page_title="NEON VOID DETECTOR", page_icon="⚡", layout="centered")
 
-# Matrix + Cyberpunk CSS + Animationen
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
@@ -32,51 +31,41 @@ st.markdown("""
         100% { text-shadow: 0 0 20px #00ff41; }
     }
     
-    /* Scanlines */
     .stApp::before {
         content: "";
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
         background: repeating-linear-gradient(
-            transparent 0px,
-            transparent 2px,
-            rgba(0, 255, 65, 0.03) 2px,
-            rgba(0, 255, 65, 0.03) 4px
+            transparent 0px, transparent 2px,
+            rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px
         );
         pointer-events: none;
         z-index: 9999;
         animation: scan 4s linear infinite;
     }
     
-    @keyframes scan {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(100%); }
-    }
+    @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
     
     .neon-border {
         border: 2px solid #00ff41;
-        box-shadow: 0 0 15px #00ff41, 0 0 30px #00ff41;
+        box-shadow: 0 0 15px #00ff41, 0 0 40px #00ff41;
         padding: 15px;
         border-radius: 8px;
         animation: pulse 2s infinite alternate;
     }
     
-    @keyframes pulse {
-        from { box-shadow: 0 0 10px #00ff41; }
-        to { box-shadow: 0 0 30px #00ff41, 0 0 50px #00ff41; }
-    }
+    @keyframes pulse { from { box-shadow: 0 0 10px #00ff41; } to { box-shadow: 0 0 35px #00ff41; } }
     
     .terminal {
-        background: rgba(0, 20, 0, 0.8);
+        background: rgba(0, 30, 0, 0.85);
         border: 1px solid #00ff41;
-        padding: 12px;
+        padding: 15px;
         font-family: 'VT323', monospace;
-        color: #00ff41;
     }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ NEON VOID DETECTOR v1.337")
+st.title("⚡ E-KOMPONENTEN DETEKTOR ⚡")
 st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE** — Elektrotechnische Komponenten-Erkennung")
 
 # ====================== MODELL LADEN ======================
@@ -93,18 +82,34 @@ def load_labels():
 
 class_names = load_labels()
 
-# ====================== DATEN ======================
-# ... (component_info und component_examples wie zuvor) ...
-component_info = { ... }      # Bitte Ihre bisherigen Beschreibungen hier einfügen
-component_examples = { ... }  # Bitte Ihre bisherigen Beispiele hier einfügen
+# ====================== KOMPONENTEN DATEN ======================
+component_info = {
+    "Diode": "Ermöglicht den Stromfluss nur in eine Richtung. Wird zur Gleichrichtung von Wechselstrom und als Schutzdiode eingesetzt.",
+    "Induktor": "Speichert Energie in einem magnetischen Feld. Wird in Schaltnetzteilen, Filtern und zur Entstörung verwendet.",
+    "Kondensator": "Speichert elektrische Energie in einem elektrischen Feld. Dient zur Spannungsglättung, Entkopplung und in Filterschaltungen.",
+    "LED": "Lichtemittierende Diode. Wandelt Strom direkt in Licht um. Hauptanwendung: Beleuchtung und optische Anzeigen.",
+    "Transformator": "Überträgt Energie durch elektromagnetische Induktion. Hauptsächlich zur Spannungswandlung.",
+    "Transistor": "Aktives Bauelement zur Verstärkung und Schaltung von Signalen. Grundlage aller modernen Elektronik.",
+    "Widerstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
+}
 
-# Farbring Rechner (wie in letzter Version)
+component_examples = {
+    "Diode": "• Einweggleichrichter\n• Freilaufdiode bei Motoren",
+    "Induktor": "• DC-DC-Wandler\n• LC-Filter",
+    "Kondensator": "• Netzteil-Glättung\n• Timer-Schaltungen",
+    "LED": "• Leuchtanzeigen\n• Arduino-Projekte",
+    "Transformator": "• Steckernetzteile\n• Spannungswandlung",
+    "Transistor": "• Signalverstärker\n• Motorsteuerung",
+    "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung"
+}
+
+# ====================== FARBRING RECHNER ======================
 color_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
 color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5, "Blau":6, "Violett":7, "Grau":8, "Weiß":9}
 multiplier_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"]
 tolerance_options = ["— Ignorieren —", "Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"]
 
-# ====================== UPLOAD ======================
+# ====================== UPLOAD & ANALYSE ======================
 uploaded_file = st.file_uploader("**UPLOAD IMAGE TO ANALYZE**", type=["jpg", "jpeg", "png", "webp"])
 
 if uploaded_file is not None:
@@ -117,14 +122,13 @@ if uploaded_file is not None:
     img_array = np.expand_dims(img_array, axis=0)
     
     with st.spinner("**BREACHING NEURAL FIREWALL...**"):
-        time.sleep(0.8)  # dramatische Pause
+        time.sleep(0.6)
         predictions = model.predict(img_array, verbose=0)
     
     predicted_idx = int(np.argmax(predictions[0]))
     confidence = float(predictions[0][predicted_idx]) * 100
     predicted_label = class_names[predicted_idx]
 
-    # Ergebnis mit Hacker-Style
     if confidence >= 75:
         st.success(f"**BREACH SUCCESSFUL → {predicted_label.upper()}**")
     elif confidence >= 50:
@@ -142,27 +146,64 @@ if uploaded_file is not None:
         st.subheader("PRAKTISCHE ANWENDUNGEN")
         st.info(component_examples.get(predicted_label, "Keine Daten."))
 
-    # Widerstands-Rechner (wie zuvor, bleibt unverändert)
+    # ====================== WIDERSTANDS-RECHNER ======================
     if predicted_label == "Widerstand":
-        # ... (Ihr letzter dynamischer Rechner Code hier einfügen) ...
-        pass
+        st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
+        band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True, key="band_count")
+
+        cols = st.columns(6)
+        b1 = cols[0].selectbox("Band 1", color_options, index=1, key="b1")
+        b2 = cols[1].selectbox("Band 2", color_options, index=1, key="b2")
+        
+        b3 = cols[2].selectbox("Band 3", color_options, index=0, key="b3") if band_count >= 5 else "— Ignorieren —"
+        b_mult = cols[3].selectbox("Multiplikator", multiplier_options, index=1, key="b_mult")
+        b_tol = cols[4].selectbox("Toleranz", tolerance_options, index=1, key="b_tol")
+        
+        b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6") if band_count == 6 else "— Ignorieren —"
+
+        if st.button("🔢 DECODE RESISTANCE", type="primary"):
+            try:
+                digits = [str(color_values[b]) for b in [b1, b2, b3] if b != "— Ignorieren —"]
+                if len(digits) < 2:
+                    st.error("Mindestens zwei Ziffernbänder erforderlich.")
+                else:
+                    significant = int("".join(digits))
+                    if b_mult == "Gold": multiplier = 0.1
+                    elif b_mult == "Silber": multiplier = 0.01
+                    elif b_mult != "— Ignorieren —": multiplier = 10 ** color_values[b_mult]
+                    else: multiplier = 1
+                    
+                    resistance = significant * multiplier
+                    
+                    if resistance >= 1000000:
+                        val = f"{resistance/1000000:.2f} MΩ"
+                    elif resistance >= 1000:
+                        val = f"{resistance/1000:.2f} kΩ"
+                    else:
+                        val = f"{int(resistance)} Ω"
+                    
+                    st.success(f"**DECODED VALUE:** {val}")
+                    if b_tol != "— Ignorieren —":
+                        st.info(f"**TOLERANZ:** {b_tol}")
+            except:
+                st.error("Decodierungsfehler.")
 
     st.caption(f"**SYSTEM LOG:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — NEON VOID ONLINE")
 
 else:
     st.markdown("""
         <div class="terminal neon-border">
-            <p>> INITIALIZING NEURAL SCAN...</p>
-            <p>> WAITING FOR TARGET IMAGE...</p>
-            <p>> SYSTEM READY FOR BREACH</p>
+            <p>> INITIALIZING NEURAL SCAN INTERFACE...</p>
+            <p>> WAITING FOR TARGET ACQUISITION...</p>
+            <p>> SYSTEM ARMED AND READY</p>
         </div>
     """, unsafe_allow_html=True)
 
-# Sidebar mit Hacker-Style
+# ====================== SIDEBAR ======================
 with st.sidebar:
     st.markdown("**NEON VOID v1.337**")
-    st.write(f"**ACTIVE CLASSES:** {len(class_names)}")
-    st.write("**STATUS:** ONLINE")
+    st.write(f"**ACTIVE TARGET CLASSES:** {len(class_names)}")
+    st.write("**NEURAL STATUS:** ONLINE")
     st.divider()
     st.markdown("**KNOWN TARGETS:**")
     for label in class_names:
