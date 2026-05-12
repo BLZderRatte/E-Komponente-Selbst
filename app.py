@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 
 # ====================== ULTIMATIVE HACKER UI ======================
-st.set_page_config(page_title="E-KOMPONENTEN DETEKTOR", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="NEON VOID DETECTOR", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -31,7 +31,7 @@ st.markdown("""
         100% { text-shadow: 0 0 20px #00ff41; }
     }
     
-    /* Scanlines */
+    /* Matrix Scanlines */
     .stApp::before {
         content: "";
         position: fixed;
@@ -43,83 +43,42 @@ st.markdown("""
     }
     @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
     
-    /* Neon Border */
-    .neon-border {
+    /* Neon Hacker Box */
+    .hacker-box {
+        background: rgba(0, 30, 0, 0.85);
         border: 2px solid #00ff41;
         box-shadow: 0 0 15px #00ff41, 0 0 35px #00ff41;
-        padding: 15px;
+        padding: 20px;
         border-radius: 8px;
+        margin-bottom: 15px;
         animation: pulse 2s infinite alternate;
     }
-    @keyframes pulse { from { box-shadow: 0 0 10px #00ff41; } to { box-shadow: 0 0 40px #00ff41; } }
     
-    /* File Uploader - Hacker Style */
-    .stFileUploader {
-        background: #000000 !important;
-        border: 2px dashed #00ff41 !important;
-        border-radius: 8px;
-        padding: 25px !important;
-        text-align: center;
-        box-shadow: 0 0 20px #00ff41;
-        transition: all 0.3s;
-    }
-    .stFileUploader:hover {
-        box-shadow: 0 0 35px #00ff41;
-        border-color: #ffff00;
-    }
-    .stFileUploader label {
-        color: #00ff41 !important;
-        font-size: 1.3em;
-        text-shadow: 0 0 10px #00ff41;
+    @keyframes pulse { 
+        from { box-shadow: 0 0 10px #00ff41; } 
+        to { box-shadow: 0 0 35px #00ff41; } 
     }
     
-    /* Select Boxes & Radio - Terminal Style */
-    .stSelectbox, .stRadio {
-        background: #0a0a0a !important;
-    }
-    div[data-baseweb="select"] div {
-        background-color: #111111 !important;
-        border: 1px solid #00ff41 !important;
-        color: #00ff41 !important;
-    }
-    div[data-baseweb="select"] span {
-        color: #00ff41 !important;
-    }
-    
-    /* Radio Buttons */
-    .stRadio label {
-        color: #00ff41 !important;
-    }
-    
-    /* Buttons */
+    /* Restliche Styles (Selectbox, Button, Uploader etc.) */
+    .stFileUploader { background: #000000 !important; border: 2px dashed #00ff41 !important; border-radius: 8px; padding: 25px !important; }
     .stButton>button {
         background-color: #000000;
         color: #00ff41;
         border: 2px solid #00ff41;
-        font-family: 'VT323', monospace;
         font-size: 1.2em;
         padding: 10px 25px;
         box-shadow: 0 0 15px #00ff41;
-        transition: all 0.3s;
     }
     .stButton>button:hover {
         background-color: #00ff41;
         color: #000000;
         box-shadow: 0 0 30px #ffff00;
     }
-    
-    .terminal {
-        background: rgba(0, 30, 0, 0.9);
-        border: 1px solid #00ff41;
-        padding: 15px;
-        font-family: 'VT323', monospace;
-        color: #00ff41;
-    }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ E-KOMPONENTEN DETEKTOR ⚡")
-st.markdown("**SYSTEM AKTIV**")
+st.title("⚡ NEON VOID DETECTOR v1.337")
+st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE**")
 
 # ====================== MODELL LADEN ======================
 @st.cache_resource(show_spinner=False)
@@ -162,7 +121,7 @@ color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5
 multiplier_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"]
 tolerance_options = ["— Ignorieren —", "Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"]
 
-# ====================== UPLOAD ======================
+# ====================== UPLOAD & ANALYSE ======================
 uploaded_file = st.file_uploader("**UPLOAD IMAGE TO ANALYZE**", type=["jpg", "jpeg", "png", "webp"])
 
 if uploaded_file is not None:
@@ -183,38 +142,38 @@ if uploaded_file is not None:
     predicted_label = class_names[predicted_idx]
 
     if confidence >= 75:
-        st.success(f"**KOMPONENTE ERKANNT → {predicted_label.upper()}**")
+        st.success(f"**BREACH SUCCESSFUL → {predicted_label.upper()}**")
     elif confidence >= 50:
-        st.warning(f"**WAHRSCHEINLICH → {predicted_label.upper()}**")
+        st.warning(f"**PARTIAL BREACH → {predicted_label.upper()}**")
     else:
-        st.error(f"**VIELLEICHT → {predicted_label.upper()}**")
+        st.error(f"**BREACH COMPROMISED → {predicted_label.upper()}**")
     
-    st.metric("**SICHERHEIT**", f"{confidence:.1f}%")
+    st.metric("**CONFIDENCE LEVEL**", f"{confidence:.1f}%")
 
+    # === HACKER BOXES ===
     col1, col2 = st.columns([1, 1])
     with col1:
         st.subheader("TECHNISCHE SPEZIFIKATION")
-        st.info(component_info.get(predicted_label, "Daten nicht verfügbar."))
+        st.markdown(f'<div class="hacker-box">{component_info.get(predicted_label, "Daten nicht verfügbar.")}</div>', unsafe_allow_html=True)
+    
     with col2:
         st.subheader("PRAKTISCHE ANWENDUNGEN")
-        st.info(component_examples.get(predicted_label, "Keine Daten."))
+        st.markdown(f'<div class="hacker-box">{component_examples.get(predicted_label, "Keine Daten.")}</div>', unsafe_allow_html=True)
 
     # ====================== WIDERSTANDS-RECHNER ======================
     if predicted_label == "Widerstand":
-        st.subheader("WIDERSTANDS-FARBRING DECODER")
+        st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
         band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True, key="band_count")
-
         cols = st.columns(6)
         b1 = cols[0].selectbox("Band 1", color_options, index=1, key="b1")
         b2 = cols[1].selectbox("Band 2", color_options, index=1, key="b2")
-        
         b3 = cols[2].selectbox("Band 3", color_options, index=0, key="b3") if band_count >= 5 else "— Ignorieren —"
         b_mult = cols[3].selectbox("Multiplikator", multiplier_options, index=1, key="b_mult")
         b_tol = cols[4].selectbox("Toleranz", tolerance_options, index=1, key="b_tol")
         
         b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6") if band_count == 6 else "— Ignorieren —"
 
-        if st.button("WIDERSTAND BERECHNEN", type="primary"):
+        if st.button("🔢 DECODE RESISTANCE", type="primary"):
             try:
                 digits = [str(color_values[b]) for b in [b1, b2, b3] if b != "— Ignorieren —"]
                 if len(digits) < 2:
@@ -244,16 +203,15 @@ if uploaded_file is not None:
 
 else:
     st.markdown("""
-        <div class="terminal neon-border">
-            <p>> INITIALIZING NEURAL SCAN INTERFACE...</p>
+        <div class="neon-border" style="text-align:center; padding:40px;">
             <p>> WAITING FOR TARGET IMAGE UPLOAD...</p>
-            <p>> SYSTEM ARMED AND READY FOR DETECTION</p>
+            <p>> SYSTEM ARMED AND READY FOR BREACH</p>
         </div>
     """, unsafe_allow_html=True)
 
 # ====================== SIDEBAR ======================
 with st.sidebar:
-    st.markdown("**E-DETEKTOR**")
+    st.markdown("**NEON VOID v1.337**")
     st.write(f"**ACTIVE TARGET CLASSES:** {len(class_names)}")
     st.write("**NEURAL STATUS:** ONLINE")
     st.divider()
