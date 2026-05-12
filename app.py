@@ -211,14 +211,14 @@ if uploaded_file is not None:
             except:
                 st.error("Decodierungsfehler.")
 
-    st.caption(f"**SYSTEM LOG:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — NEON VOID ONLINE")
+    st.caption(f"**SYSTEM LOG:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — DETEKTOR ONLINE")
 
 else:
     st.markdown("""
         <div class="hacker-box" style="text-align:center; padding:60px; margin-top:30px;">
             <h2>> NEURAL INTERFACE ONLINE</h2>
             <p>> WAITING FOR TARGET IMAGE UPLOAD...</p>
-            <p>> SYSTEM READY FOR BREACH</p>
+            <p>> SYSTEM READY FOR DETECTION</p>
         </div>
     """, unsafe_allow_html=True)
 
