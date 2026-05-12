@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 
 # ====================== ULTIMATIVE HACKER UI ======================
-st.set_page_config(page_title="NEON VOID DETECTOR", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="E-KOMPONENTEN DETEKTOR", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -118,8 +118,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ NEON VOID DETECTOR v1.337")
-st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE**")
+st.title("⚡ E-KOMPONENTEN DETEKTOR ⚡")
+st.markdown("**SYSTEM AKTIV**")
 
 # ====================== MODELL LADEN ======================
 @st.cache_resource(show_spinner=False)
@@ -183,11 +183,11 @@ if uploaded_file is not None:
     predicted_label = class_names[predicted_idx]
 
     if confidence >= 75:
-        st.success(f"**BREACH SUCCESSFUL → {predicted_label.upper()}**")
+        st.success(f"**KOMPONENTE ERKANNT → {predicted_label.upper()}**")
     elif confidence >= 50:
-        st.warning(f"**PARTIAL BREACH → {predicted_label.upper()}**")
+        st.warning(f"**WAHRSCHEINLICH → {predicted_label.upper()}**")
     else:
-        st.error(f"**BREACH COMPROMISED → {predicted_label.upper()}**")
+        st.error(f"**VIELLEICHT → {predicted_label.upper()}**")
     
     st.metric("**CONFIDENCE LEVEL**", f"{confidence:.1f}%")
 
@@ -201,7 +201,7 @@ if uploaded_file is not None:
 
     # ====================== WIDERSTANDS-RECHNER ======================
     if predicted_label == "Widerstand":
-        st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
+        st.subheader("WIDERSTANDS-FARBRING DECODER")
         band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True, key="band_count")
 
         cols = st.columns(6)
@@ -253,7 +253,7 @@ else:
 
 # ====================== SIDEBAR ======================
 with st.sidebar:
-    st.markdown("**NEON VOID v1.337**")
+    st.markdown("**E-DETEKTOR**")
     st.write(f"**ACTIVE TARGET CLASSES:** {len(class_names)}")
     st.write("**NEURAL STATUS:** ONLINE")
     st.divider()
