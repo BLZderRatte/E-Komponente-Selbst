@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 
 # ====================== ULTIMATIVE HACKER UI ======================
-st.set_page_config(page_title="NEON VOID DETECTOR", page_icon="⚡", layout="centered")
+st.set_page_config(page_title="E-KOMPONENTEN DETEKTOR", page_icon="⚡", layout="centered")
 
 st.markdown("""
     <style>
@@ -89,8 +89,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ NEON VOID DETECTOR v1.337")
-st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE**")
+st.title("⚡ E-KOMPONENTEN DETEKTOR ⚡")
+st.markdown("**SYSTEM DETECTOR PROTOCOL ACTIVE**")
 
 # ====================== MODELL LADEN ======================
 @st.cache_resource(show_spinner=False)
@@ -156,9 +156,9 @@ if uploaded_file is not None:
     # Epische Ergebnis-Box
     st.markdown(f"""
     <div class="result-box">
-        <h2>BREACH SUCCESSFUL</h2>
+        <h2>DETEKTION ERFOLGREICH</h2>
         <h3>{predicted_label.upper()}</h3>
-        <p>CONFIDENCE: {confidence:.1f}%</p>
+        <p>WAHRSCHEINLICHKEIT: {confidence:.1f}%</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -174,7 +174,7 @@ if uploaded_file is not None:
 
     # ====================== WIDERSTANDS DECODER ======================
     if predicted_label == "Widerstand":
-        st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
+        st.subheader("WIDERSTANDS-FARBRING DECODER")
         band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True, key="band_count")
         cols = st.columns(6)
         b1 = cols[0].selectbox("Band 1", color_options, index=1, key="b1")
@@ -185,7 +185,7 @@ if uploaded_file is not None:
         
         b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6") if band_count == 6 else "— Ignorieren —"
 
-        if st.button("🔢 DECODE RESISTANCE", type="primary"):
+        if st.button("WIDERSTAND BERECHNEN", type="primary"):
             try:
                 digits = [str(color_values[b]) for b in [b1, b2, b3] if b != "— Ignorieren —"]
                 if len(digits) < 2:
