@@ -189,7 +189,7 @@ if uploaded_file is not None:
     else:
         st.error(f"**VIELLEICHT → {predicted_label.upper()}**")
     
-    st.metric("**CONFIDENCE LEVEL**", f"{confidence:.1f}%")
+    st.metric("**SICHERHEIT**", f"{confidence:.1f}%")
 
     col1, col2 = st.columns([1, 1])
     with col1:
