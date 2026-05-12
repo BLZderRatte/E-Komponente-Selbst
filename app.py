@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime
 import time
 
-# ====================== REVOLUTIONÄRES HACKER UI ======================
+# ====================== ULTIMATIVE HACKER UI ======================
 st.set_page_config(page_title="NEON VOID DETECTOR", page_icon="⚡", layout="centered")
 
 st.markdown("""
@@ -21,7 +21,7 @@ st.markdown("""
     h1, h2, h3 {
         font-family: 'VT323', monospace;
         text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
-        animation: glitch 1.5s infinite;
+        animation: glitch 1.8s infinite;
     }
     
     @keyframes glitch {
@@ -31,42 +31,95 @@ st.markdown("""
         100% { text-shadow: 0 0 20px #00ff41; }
     }
     
+    /* Scanlines */
     .stApp::before {
         content: "";
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: repeating-linear-gradient(
-            transparent 0px, transparent 2px,
-            rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px
-        );
+        background: repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0, 255, 65, 0.04) 2px, rgba(0, 255, 65, 0.04) 4px);
         pointer-events: none;
         z-index: 9999;
         animation: scan 4s linear infinite;
     }
-    
     @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
     
+    /* Neon Border */
     .neon-border {
         border: 2px solid #00ff41;
-        box-shadow: 0 0 15px #00ff41, 0 0 40px #00ff41;
+        box-shadow: 0 0 15px #00ff41, 0 0 35px #00ff41;
         padding: 15px;
         border-radius: 8px;
         animation: pulse 2s infinite alternate;
     }
+    @keyframes pulse { from { box-shadow: 0 0 10px #00ff41; } to { box-shadow: 0 0 40px #00ff41; } }
     
-    @keyframes pulse { from { box-shadow: 0 0 10px #00ff41; } to { box-shadow: 0 0 35px #00ff41; } }
+    /* File Uploader - Hacker Style */
+    .stFileUploader {
+        background: #000000 !important;
+        border: 2px dashed #00ff41 !important;
+        border-radius: 8px;
+        padding: 25px !important;
+        text-align: center;
+        box-shadow: 0 0 20px #00ff41;
+        transition: all 0.3s;
+    }
+    .stFileUploader:hover {
+        box-shadow: 0 0 35px #00ff41;
+        border-color: #ffff00;
+    }
+    .stFileUploader label {
+        color: #00ff41 !important;
+        font-size: 1.3em;
+        text-shadow: 0 0 10px #00ff41;
+    }
+    
+    /* Select Boxes & Radio - Terminal Style */
+    .stSelectbox, .stRadio {
+        background: #0a0a0a !important;
+    }
+    div[data-baseweb="select"] div {
+        background-color: #111111 !important;
+        border: 1px solid #00ff41 !important;
+        color: #00ff41 !important;
+    }
+    div[data-baseweb="select"] span {
+        color: #00ff41 !important;
+    }
+    
+    /* Radio Buttons */
+    .stRadio label {
+        color: #00ff41 !important;
+    }
+    
+    /* Buttons */
+    .stButton>button {
+        background-color: #000000;
+        color: #00ff41;
+        border: 2px solid #00ff41;
+        font-family: 'VT323', monospace;
+        font-size: 1.2em;
+        padding: 10px 25px;
+        box-shadow: 0 0 15px #00ff41;
+        transition: all 0.3s;
+    }
+    .stButton>button:hover {
+        background-color: #00ff41;
+        color: #000000;
+        box-shadow: 0 0 30px #ffff00;
+    }
     
     .terminal {
-        background: rgba(0, 30, 0, 0.85);
+        background: rgba(0, 30, 0, 0.9);
         border: 1px solid #00ff41;
         padding: 15px;
         font-family: 'VT323', monospace;
+        color: #00ff41;
     }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("⚡ E-KOMPONENTEN DETEKTOR ⚡")
-st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE** — Elektrotechnische Komponenten-Erkennung")
+st.title("⚡ NEON VOID DETECTOR v1.337")
+st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE**")
 
 # ====================== MODELL LADEN ======================
 @st.cache_resource(show_spinner=False)
@@ -109,7 +162,7 @@ color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5
 multiplier_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"]
 tolerance_options = ["— Ignorieren —", "Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"]
 
-# ====================== UPLOAD & ANALYSE ======================
+# ====================== UPLOAD ======================
 uploaded_file = st.file_uploader("**UPLOAD IMAGE TO ANALYZE**", type=["jpg", "jpeg", "png", "webp"])
 
 if uploaded_file is not None:
@@ -122,7 +175,7 @@ if uploaded_file is not None:
     img_array = np.expand_dims(img_array, axis=0)
     
     with st.spinner("**BREACHING NEURAL FIREWALL...**"):
-        time.sleep(0.6)
+        time.sleep(0.7)
         predictions = model.predict(img_array, verbose=0)
     
     predicted_idx = int(np.argmax(predictions[0]))
@@ -174,7 +227,6 @@ if uploaded_file is not None:
                     else: multiplier = 1
                     
                     resistance = significant * multiplier
-                    
                     if resistance >= 1000000:
                         val = f"{resistance/1000000:.2f} MΩ"
                     elif resistance >= 1000:
@@ -194,8 +246,8 @@ else:
     st.markdown("""
         <div class="terminal neon-border">
             <p>> INITIALIZING NEURAL SCAN INTERFACE...</p>
-            <p>> WAITING FOR TARGET ACQUISITION...</p>
-            <p>> SYSTEM ARMED AND READY</p>
+            <p>> WAITING FOR TARGET IMAGE UPLOAD...</p>
+            <p>> SYSTEM ARMED AND READY FOR BREACH</p>
         </div>
     """, unsafe_allow_html=True)
 
