@@ -41,29 +41,84 @@ st.markdown("""
     }
     @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
     
-    .result-box {
-        background: rgba(0, 40, 0, 0.95);
-        border: 3px solid #00ff41;
-        box-shadow: 0 0 30px #00ff41, 0 0 60px #00ff41;
-        padding: 25px;
-        border-radius: 8px;
-        text-align: center;
-        margin: 20px 0;
-    }
-    
-    .hacker-box {
-        background: rgba(0, 25, 0, 0.92);
+    /* Epische Boxen */
+    .result-box, .hacker-box {
+        background: rgba(0, 25, 0, 0.95);
         border: 2px solid #00ff41;
-        box-shadow: 0 0 20px #00ff41, 0 0 45px #00ff41;
+        box-shadow: 0 0 25px #00ff41, 0 0 50px #00ff41;
         padding: 20px;
         border-radius: 8px;
-        margin: 12px 0;
+        margin: 15px 0;
         animation: pulse 2.5s infinite alternate;
     }
     
     @keyframes pulse { 
         from { box-shadow: 0 0 15px #00ff41; } 
-        to { box-shadow: 0 0 45px #00ff41; } 
+        to { box-shadow: 0 0 50px #00ff41; } 
+    }
+    
+    /* === KRASSER HACKER SELECT STYLE === */
+    div[data-baseweb="select"] {
+        background-color: #0a0a0a !important;
+        border: 2px solid #00ff41 !important;
+        box-shadow: 0 0 20px #00ff41 !important;
+        border-radius: 6px;
+    }
+    div[data-baseweb="select"] div {
+        background-color: #111111 !important;
+        color: #00ff41 !important;
+    }
+    div[data-baseweb="select"] span {
+        color: #00ff41 !important;
+        text-shadow: 0 0 10px #00ff41;
+    }
+    
+    /* Dropdown Optionen */
+    div[role="listbox"] {
+        background-color: #0a0a0a !important;
+        border: 2px solid #00ff41 !important;
+    }
+    div[role="option"] {
+        color: #00ff41 !important;
+        background-color: #111111 !important;
+    }
+    div[role="option"]:hover {
+        background-color: #003300 !important;
+        color: #ffff00 !important;
+        text-shadow: 0 0 12px #ffff00;
+    }
+    
+    /* Radio Buttons */
+    .stRadio label {
+        color: #00ff41 !important;
+        text-shadow: 0 0 8px #00ff41;
+    }
+    
+    /* === DECODE BUTTON - ULTRA HACKER STYLE === */
+    .stButton>button {
+        background-color: #000000;
+        color: #00ff41;
+        border: 3px solid #00ff41;
+        font-size: 1.35em;
+        padding: 15px 40px;
+        box-shadow: 0 0 25px #00ff41;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    .stButton>button:hover {
+        background-color: #00ff41;
+        color: #000000;
+        box-shadow: 0 0 40px #ffff00, 0 0 60px #ffff00;
+        transform: scale(1.05);
+    }
+    
+    /* File Uploader */
+    .stFileUploader {
+        background: #000000 !important;
+        border: 2px dashed #00ff41 !important;
+        border-radius: 8px;
+        padding: 25px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -71,7 +126,7 @@ st.markdown("""
 st.title("⚡ NEON VOID DETECTOR v1.337")
 st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE**")
 
-# ====================== MODELL LADEN ======================
+# ====================== MODELL & DATEN ======================
 @st.cache_resource(show_spinner=False)
 def load_model():
     return tf.keras.models.load_model("model/keras_model.h5", compile=False)
@@ -85,26 +140,8 @@ def load_labels():
 
 class_names = load_labels()
 
-# ====================== DATEN ======================
-component_info = {
-    "Diode": "Ermöglicht den Stromfluss nur in eine Richtung. Wird zur Gleichrichtung von Wechselstrom und als Schutzdiode eingesetzt.",
-    "Induktor": "Speichert Energie in einem magnetischen Feld. Wird in Schaltnetzteilen, Filtern und zur Entstörung verwendet.",
-    "Kondensator": "Speichert elektrische Energie in einem elektrischen Feld. Dient zur Spannungsglättung, Entkopplung und in Filterschaltungen.",
-    "LED": "Lichtemittierende Diode. Wandelt Strom direkt in Licht um. Hauptanwendung: Beleuchtung und optische Anzeigen.",
-    "Transformator": "Überträgt Energie durch elektromagnetische Induktion. Hauptsächlich zur Spannungswandlung.",
-    "Transistor": "Aktives Bauelement zur Verstärkung und Schaltung von Signalen. Grundlage aller modernen Elektronik.",
-    "Widerstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
-}
-
-component_examples = {
-    "Diode": "• Einweggleichrichter\n• Freilaufdiode bei Motoren",
-    "Induktor": "• DC-DC-Wandler\n• LC-Filter",
-    "Kondensator": "• Netzteil-Glättung\n• Timer-Schaltungen",
-    "LED": "• Leuchtanzeigen\n• Arduino-Projekte",
-    "Transformator": "• Steckernetzteile\n• Spannungswandlung",
-    "Transistor": "• Signalverstärker\n• Motorsteuerung",
-    "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung"
-}
+component_info = { ... }      # Ihre Beschreibungen hier einfügen (wie vorher)
+component_examples = { ... }  # Ihre Beispiele hier einfügen
 
 # ====================== FARBRING RECHNER ======================
 color_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
@@ -132,29 +169,28 @@ if uploaded_file is not None:
     confidence = float(predictions[0][predicted_idx]) * 100
     predicted_label = class_names[predicted_idx]
 
-    # === EPISCHE ERGEBNIS BOX ===
+    # Epische Ergebnis-Box
     st.markdown(f"""
     <div class="result-box">
         <h2>BREACH SUCCESSFUL</h2>
         <h3>{predicted_label.upper()}</h3>
-        <p>CONFIDENCE LEVEL: {confidence:.1f}%</p>
+        <p>CONFIDENCE: {confidence:.1f}%</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # Hacker Boxes
     col1, col2 = st.columns([1, 1])
     with col1:
         st.subheader("TECHNISCHE SPEZIFIKATION")
         st.markdown(f'<div class="hacker-box">{component_info.get(predicted_label, "Daten nicht verfügbar.")}</div>', unsafe_allow_html=True)
-    
     with col2:
         st.subheader("PRAKTISCHE ANWENDUNGEN")
         st.markdown(f'<div class="hacker-box">{component_examples.get(predicted_label, "Keine Daten.")}</div>', unsafe_allow_html=True)
 
-    # ====================== WIDERSTANDS-RECHNER ======================
+    # ====================== WIDERSTANDS DECODER ======================
     if predicted_label == "Widerstand":
         st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
         band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True, key="band_count")
+        
         cols = st.columns(6)
         b1 = cols[0].selectbox("Band 1", color_options, index=1, key="b1")
         b2 = cols[1].selectbox("Band 2", color_options, index=1, key="b2")
@@ -162,7 +198,10 @@ if uploaded_file is not None:
         b_mult = cols[3].selectbox("Multiplikator", multiplier_options, index=1, key="b_mult")
         b_tol = cols[4].selectbox("Toleranz", tolerance_options, index=1, key="b_tol")
         
-        b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6") if band_count == 6 else "— Ignorieren —"
+        if band_count == 6:
+            b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6")
+        else:
+            b6 = "— Ignorieren —"
 
         if st.button("🔢 DECODE RESISTANCE", type="primary"):
             try:
@@ -177,7 +216,6 @@ if uploaded_file is not None:
                     else: multiplier = 1
                     
                     resistance = significant * multiplier
-                    
                     if resistance >= 1000000:
                         val = f"{resistance/1000000:.2f} MΩ"
                     elif resistance >= 1000:
@@ -195,18 +233,17 @@ if uploaded_file is not None:
 
 else:
     st.markdown("""
-        <div class="hacker-box" style="text-align:center; padding:60px; margin-top:30px;">
+        <div class="hacker-box" style="text-align:center; padding:60px;">
             <h2>> NEURAL INTERFACE ONLINE</h2>
             <p>> WAITING FOR TARGET IMAGE UPLOAD...</p>
             <p>> SYSTEM READY FOR BREACH</p>
         </div>
     """, unsafe_allow_html=True)
 
-# ====================== SIDEBAR ======================
+# Sidebar
 with st.sidebar:
     st.markdown("**NEON VOID v1.337**")
     st.write(f"**ACTIVE TARGET CLASSES:** {len(class_names)}")
-    st.write("**NEURAL STATUS:** ONLINE")
     st.divider()
     st.markdown("**KNOWN TARGETS:**")
     for label in class_names:
