@@ -4,4 +4,4 @@
 3 LED
 4 Transformator
 5 Transistor
-6 Wiederstand
+6 Widerstand
