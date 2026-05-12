@@ -214,7 +214,7 @@ if uploaded_file is not None:
         
         b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6") if band_count == 6 else "— Ignorieren —"
 
-        if st.button("🔢 DECODE RESISTANCE", type="primary"):
+        if st.button("WIDERSTAND BERECHNEN", type="primary"):
             try:
                 digits = [str(color_values[b]) for b in [b1, b2, b3] if b != "— Ignorieren —"]
                 if len(digits) < 2:
