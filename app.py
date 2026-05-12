@@ -29,14 +29,9 @@ st.markdown("""
         100% { text-shadow: 0 0 25px #00ff41; }
     }
     
-    /* Matrix Rain */
-    #matrix {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        z-index: -1;
-        opacity: 0.18;
-        pointer-events: none;
+    #matrix { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        z-index: -1; opacity: 0.18; pointer-events: none; 
     }
     
     .neon-border {
@@ -46,48 +41,20 @@ st.markdown("""
         border-radius: 8px;
     }
     
-    /* === HACKER STYLE SELECTBOXES & RADIO === */
+    /* Hacker Selectboxes */
     div[data-baseweb="select"] {
         background-color: #0a0a0a !important;
         border: 2px solid #00ff41 !important;
         box-shadow: 0 0 15px #00ff41;
     }
-    div[data-baseweb="select"] div {
-        background-color: #111111 !important;
+    div[data-baseweb="select"] span, div[role="option"] {
         color: #00ff41 !important;
-    }
-    div[data-baseweb="select"] span {
-        color: #00ff41 !important;
-    }
-    
-    /* Dropdown Optionen */
-    div[role="listbox"] {
-        background-color: #0a0a0a !important;
-        border: 1px solid #00ff41 !important;
-    }
-    div[role="option"] {
-        color: #00ff41 !important;
-        background-color: #111111 !important;
     }
     div[role="option"]:hover {
         background-color: #003300 !important;
         color: #ffff00 !important;
     }
     
-    /* Radio Buttons */
-    .stRadio label {
-        color: #00ff41 !important;
-        text-shadow: 0 0 8px #00ff41;
-    }
-    .stRadio div[role="radiogroup"] label {
-        background: #111111;
-        border: 1px solid #00ff41;
-        padding: 8px;
-        margin: 4px;
-        border-radius: 4px;
-    }
-    
-    /* Button */
     .stButton>button {
         background-color: #000000;
         color: #00ff41;
@@ -95,24 +62,11 @@ st.markdown("""
         font-size: 1.25em;
         padding: 12px 30px;
         box-shadow: 0 0 20px #00ff41;
-        transition: all 0.3s;
     }
     .stButton>button:hover {
         background-color: #00ff41;
         color: #000000;
         box-shadow: 0 0 30px #ffff00;
-    }
-    
-    /* File Uploader */
-    .stFileUploader {
-        background: #000000 !important;
-        border: 2px dashed #00ff41 !important;
-        border-radius: 8px;
-        padding: 25px !important;
-    }
-    .stFileUploader:hover {
-        border-color: #ffff00;
-        box-shadow: 0 0 25px #00ff41;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -149,7 +103,7 @@ st.markdown("""
 st.title("⚡ NEON VOID DETECTOR v1.337")
 st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE**")
 
-# ====================== MODELL & DATEN ======================
+# ====================== MODELL LADEN ======================
 @st.cache_resource(show_spinner=False)
 def load_model():
     return tf.keras.models.load_model("model/keras_model.h5", compile=False)
@@ -163,8 +117,26 @@ def load_labels():
 
 class_names = load_labels()
 
-component_info = { ... }      # Ihre Beschreibungen hier einfügen
-component_examples = { ... }  # Ihre Beispiele hier einfügen
+# ====================== KOMPONENTEN DATEN ======================
+component_info = {
+    "Diode": "Ermöglicht den Stromfluss nur in eine Richtung. Wird zur Gleichrichtung von Wechselstrom und als Schutzdiode eingesetzt.",
+    "Induktor": "Speichert Energie in einem magnetischen Feld. Wird in Schaltnetzteilen, Filtern und zur Entstörung verwendet.",
+    "Kondensator": "Speichert elektrische Energie in einem elektrischen Feld. Dient zur Spannungsglättung, Entkopplung und in Filterschaltungen.",
+    "LED": "Lichtemittierende Diode. Wandelt Strom direkt in Licht um. Hauptanwendung: Beleuchtung und optische Anzeigen.",
+    "Transformator": "Überträgt Energie durch elektromagnetische Induktion. Hauptsächlich zur Spannungswandlung.",
+    "Transistor": "Aktives Bauelement zur Verstärkung und Schaltung von Signalen. Grundlage aller modernen Elektronik.",
+    "Widerstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
+}
+
+component_examples = {
+    "Diode": "• Einweggleichrichter\n• Freilaufdiode bei Motoren",
+    "Induktor": "• DC-DC-Wandler\n• LC-Filter",
+    "Kondensator": "• Netzteil-Glättung\n• Timer-Schaltungen",
+    "LED": "• Leuchtanzeigen\n• Arduino-Projekte",
+    "Transformator": "• Steckernetzteile\n• Spannungswandlung",
+    "Transistor": "• Signalverstärker\n• Motorsteuerung",
+    "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung"
+}
 
 # ====================== FARBRING DECODER ======================
 color_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
@@ -172,7 +144,7 @@ color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5
 multiplier_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"]
 tolerance_options = ["— Ignorieren —", "Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"]
 
-# ====================== UPLOAD & ANALYSE ======================
+# ====================== UPLOAD ======================
 uploaded_file = st.file_uploader("**UPLOAD IMAGE TO ANALYZE**", type=["jpg", "jpeg", "png", "webp"])
 
 if uploaded_file is not None:
@@ -192,7 +164,6 @@ if uploaded_file is not None:
     confidence = float(predictions[0][predicted_idx]) * 100
     predicted_label = class_names[predicted_idx]
 
-    # Ergebnis
     if confidence >= 75:
         st.success(f"**BREACH SUCCESSFUL → {predicted_label.upper()}**")
     elif confidence >= 50:
@@ -210,7 +181,7 @@ if uploaded_file is not None:
         st.subheader("PRAKTISCHE ANWENDUNGEN")
         st.info(component_examples.get(predicted_label, "Keine Daten"))
 
-    # ====================== WIDERSTAND DECODER ======================
+    # ====================== WIDERSTANDS DECODER ======================
     if predicted_label == "Widerstand":
         st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
         band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True, key="band_count")
@@ -240,6 +211,7 @@ if uploaded_file is not None:
                     else: multiplier = 1
                     
                     resistance = value * multiplier
+                    
                     if resistance >= 1000000:
                         result = f"{resistance/1000000:.2f} MΩ"
                     elif resistance >= 1000:
@@ -267,3 +239,7 @@ else:
 with st.sidebar:
     st.markdown("**NEON VOID v1.337**")
     st.write(f"**ACTIVE CLASSES:** {len(class_names)}")
+    st.divider()
+    st.markdown("**KNOWN TARGETS:**")
+    for label in class_names:
+        st.markdown(f"⚡ **{label}**")
