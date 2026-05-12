@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime
 import time
 
-# ====================== ULTIMATIVE CYBERPUNK HACKER UI ======================
+# ====================== ULTIMATIVE CYBERPUNK UI ======================
 st.set_page_config(page_title="NEON VOID DETECTOR", page_icon="⚡", layout="centered")
 
 st.markdown("""
@@ -28,16 +28,17 @@ st.markdown("""
         0% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
         20% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
         40% { text-shadow: 2px 0 #00ff41, -2px 0 #ffff00; }
-        100% { text-shadow: 0 0 20px #00ff41; }
+        100% { text-shadow: 0 0 25px #00ff41; }
     }
     
-    /* Matrix Rain Canvas */
+    /* Matrix Rain - Hintergrund */
     #matrix {
         position: fixed;
         top: 0; left: 0;
         width: 100%; height: 100%;
         z-index: -1;
-        opacity: 0.25;
+        opacity: 0.18;
+        pointer-events: none;
     }
     
     .neon-border {
@@ -47,24 +48,38 @@ st.markdown("""
         border-radius: 8px;
         animation: pulse 2s infinite alternate;
     }
-    @keyframes pulse { from { box-shadow: 0 0 10px #00ff41; } to { box-shadow: 0 0 40px #00ff41; } }
+    
+    @keyframes pulse { 
+        from { box-shadow: 0 0 10px #00ff41; } 
+        to { box-shadow: 0 0 40px #00ff41; } 
+    }
+    
+    /* Bessere Sichtbarkeit der Inhalte */
+    .stFileUploader, .stSelectbox, .stRadio, .stButton, .stAlert, .stInfo {
+        z-index: 10;
+        position: relative;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# ==================== MATRIX RAIN BACKGROUND ====================
+# ==================== MATRIX RAIN ====================
 st.markdown("""
     <canvas id="matrix"></canvas>
     <script>
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
     
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+    function resizeCanvas() {
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
     
-    const chars = "01アイウエオカキクケコ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const chars = "01アイウエオカキクケコ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$@#%&";
     const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
+    let columns = canvas.width / fontSize;
+    let drops = Array(Math.floor(columns)).fill(1);
     
     function draw() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -83,11 +98,6 @@ st.markdown("""
         }
     }
     setInterval(draw, 35);
-    
-    window.addEventListener('resize', () => {
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-    });
     </script>
 """, unsafe_allow_html=True)
 
@@ -109,27 +119,84 @@ def load_labels():
 class_names = load_labels()
 
 # ====================== KOMPONENTEN DATEN ======================
-component_info = { ... }      # Ihre bisherigen Beschreibungen
-component_examples = { ... }  # Ihre bisherigen Beispiele
+component_info = {
+    "Diode": "Ermöglicht den Stromfluss nur in eine Richtung. Wird zur Gleichrichtung von Wechselstrom und als Schutzdiode eingesetzt.",
+    "Induktor": "Speichert Energie in einem magnetischen Feld. Wird in Schaltnetzteilen, Filtern und zur Entstörung verwendet.",
+    "Kondensator": "Speichert elektrische Energie in einem elektrischen Feld. Dient zur Spannungsglättung, Entkopplung und in Filterschaltungen.",
+    "LED": "Lichtemittierende Diode. Wandelt Strom direkt in Licht um. Hauptanwendung: Beleuchtung und optische Anzeigen.",
+    "Transformator": "Überträgt Energie durch elektromagnetische Induktion. Hauptsächlich zur Spannungswandlung.",
+    "Transistor": "Aktives Bauelement zur Verstärkung und Schaltung von Signalen. Grundlage aller modernen Elektronik.",
+    "Widerstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
+}
 
-# (Fügen Sie hier Ihre component_info und component_examples ein)
+component_examples = {
+    "Diode": "• Einweggleichrichter\n• Freilaufdiode bei Motoren",
+    "Induktor": "• DC-DC-Wandler\n• LC-Filter",
+    "Kondensator": "• Netzteil-Glättung\n• Timer-Schaltungen",
+    "LED": "• Leuchtanzeigen\n• Arduino-Projekte",
+    "Transformator": "• Steckernetzteile\n• Spannungswandlung",
+    "Transistor": "• Signalverstärker\n• Motorsteuerung",
+    "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung"
+}
 
-# ====================== FARBRING RECHNER ======================
-# (Ihr bisheriger Farbring-Rechner Code bleibt gleich)
+# ====================== UPLOAD & ANALYSE ======================
+uploaded_file = st.file_uploader("**UPLOAD IMAGE TO ANALYZE**", type=["jpg", "jpeg", "png", "webp"])
 
-# ====================== HACKER BACKGROUND MUSIC ======================
-st.sidebar.markdown("**🎵 HACKER AMBIENCE**")
-music_option = st.sidebar.selectbox("Background Track", 
-    ["None", "Cyberpunk Synthwave", "Dark Hacker Terminal", "Blade Runner Ambience"])
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="**TARGET ACQUIRED**", use_column_width=True)
+    
+    size = (224, 224)
+    image_resized = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+    img_array = np.asarray(image_resized, dtype=np.float32) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    
+    with st.spinner("**BREACHING NEURAL FIREWALL...**"):
+        time.sleep(0.7)
+        predictions = model.predict(img_array, verbose=0)
+    
+    predicted_idx = int(np.argmax(predictions[0]))
+    confidence = float(predictions[0][predicted_idx]) * 100
+    predicted_label = class_names[predicted_idx]
 
-if music_option != "None":
-    # Beispiel-Links (öffentliche, royalty-free Quellen)
-    if music_option == "Cyberpunk Synthwave":
-        st.sidebar.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", format="audio/mp3", start_time=0)
-    elif music_option == "Dark Hacker Terminal":
-        st.sidebar.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3", format="audio/mp3")
+    if confidence >= 75:
+        st.success(f"**BREACH SUCCESSFUL → {predicted_label.upper()}**")
+    elif confidence >= 50:
+        st.warning(f"**PARTIAL BREACH → {predicted_label.upper()}**")
     else:
-        st.sidebar.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", format="audio/mp3")
-    st.sidebar.caption("🔊 Volume in Sidebar →")
+        st.error(f"**BREACH COMPROMISED → {predicted_label.upper()}**")
+    
+    st.metric("**CONFIDENCE LEVEL**", f"{confidence:.1f}%")
 
-# Rest der App (Upload, Analyse, Widerstandsrechner) wie in der vorherigen Version...
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.subheader("TECHNISCHE SPEZIFIKATION")
+        st.info(component_info.get(predicted_label, "Daten nicht verfügbar."))
+    with col2:
+        st.subheader("PRAKTISCHE ANWENDUNGEN")
+        st.info(component_examples.get(predicted_label, "Keine Daten."))
+
+    # Widerstands-Rechner (dynamisch)
+    if predicted_label == "Widerstand":
+        st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
+        # ... (Ihr bisheriger Rechner-Code kann hier eingefügt werden) ...
+
+    st.caption(f"**SYSTEM LOG:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+else:
+    st.markdown("""
+        <div class="neon-border" style="text-align:center; padding:30px;">
+            <p>> INITIALIZING NEURAL SCAN INTERFACE...</p>
+            <p>> WAITING FOR TARGET IMAGE...</p>
+            <p>> SYSTEM ARMED AND READY</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+# Sidebar
+with st.sidebar:
+    st.markdown("**NEON VOID v1.337**")
+    st.write(f"**ACTIVE CLASSES:** {len(class_names)}")
+    st.divider()
+    st.markdown("**KNOWN TARGETS:**")
+    for label in class_names:
+        st.markdown(f"⚡ **{label}**")
