@@ -41,7 +41,6 @@ st.markdown("""
     }
     @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
     
-    /* Epische Boxen */
     .result-box, .hacker-box {
         background: rgba(0, 25, 0, 0.95);
         border: 2px solid #00ff41;
@@ -57,44 +56,22 @@ st.markdown("""
         to { box-shadow: 0 0 50px #00ff41; } 
     }
     
-    /* === KRASSER HACKER SELECT STYLE === */
+    /* Starke Hacker Select-Style */
     div[data-baseweb="select"] {
         background-color: #0a0a0a !important;
         border: 2px solid #00ff41 !important;
         box-shadow: 0 0 20px #00ff41 !important;
-        border-radius: 6px;
-    }
-    div[data-baseweb="select"] div {
-        background-color: #111111 !important;
-        color: #00ff41 !important;
     }
     div[data-baseweb="select"] span {
         color: #00ff41 !important;
         text-shadow: 0 0 10px #00ff41;
     }
-    
-    /* Dropdown Optionen */
-    div[role="listbox"] {
-        background-color: #0a0a0a !important;
-        border: 2px solid #00ff41 !important;
-    }
-    div[role="option"] {
-        color: #00ff41 !important;
-        background-color: #111111 !important;
-    }
     div[role="option"]:hover {
         background-color: #003300 !important;
         color: #ffff00 !important;
-        text-shadow: 0 0 12px #ffff00;
     }
     
-    /* Radio Buttons */
-    .stRadio label {
-        color: #00ff41 !important;
-        text-shadow: 0 0 8px #00ff41;
-    }
-    
-    /* === DECODE BUTTON - ULTRA HACKER STYLE === */
+    /* Decode Button */
     .stButton>button {
         background-color: #000000;
         color: #00ff41;
@@ -102,23 +79,12 @@ st.markdown("""
         font-size: 1.35em;
         padding: 15px 40px;
         box-shadow: 0 0 25px #00ff41;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 2px;
     }
     .stButton>button:hover {
         background-color: #00ff41;
         color: #000000;
-        box-shadow: 0 0 40px #ffff00, 0 0 60px #ffff00;
+        box-shadow: 0 0 40px #ffff00;
         transform: scale(1.05);
-    }
-    
-    /* File Uploader */
-    .stFileUploader {
-        background: #000000 !important;
-        border: 2px dashed #00ff41 !important;
-        border-radius: 8px;
-        padding: 25px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -126,7 +92,7 @@ st.markdown("""
 st.title("⚡ NEON VOID DETECTOR v1.337")
 st.markdown("**SYSTEM BREACH PROTOCOL ACTIVE**")
 
-# ====================== MODELL & DATEN ======================
+# ====================== MODELL LADEN ======================
 @st.cache_resource(show_spinner=False)
 def load_model():
     return tf.keras.models.load_model("model/keras_model.h5", compile=False)
@@ -140,8 +106,26 @@ def load_labels():
 
 class_names = load_labels()
 
-component_info = { ... }      # Ihre Beschreibungen hier einfügen (wie vorher)
-component_examples = { ... }  # Ihre Beispiele hier einfügen
+# ====================== DATEN ======================
+component_info = {
+    "Diode": "Ermöglicht den Stromfluss nur in eine Richtung. Wird zur Gleichrichtung von Wechselstrom und als Schutzdiode eingesetzt.",
+    "Induktor": "Speichert Energie in einem magnetischen Feld. Wird in Schaltnetzteilen, Filtern und zur Entstörung verwendet.",
+    "Kondensator": "Speichert elektrische Energie in einem elektrischen Feld. Dient zur Spannungsglättung, Entkopplung und in Filterschaltungen.",
+    "LED": "Lichtemittierende Diode. Wandelt Strom direkt in Licht um. Hauptanwendung: Beleuchtung und optische Anzeigen.",
+    "Transformator": "Überträgt Energie durch elektromagnetische Induktion. Hauptsächlich zur Spannungswandlung.",
+    "Transistor": "Aktives Bauelement zur Verstärkung und Schaltung von Signalen. Grundlage aller modernen Elektronik.",
+    "Widerstand": "Begrenzt den elektrischen Stromfluss nach dem ohmschen Gesetz."
+}
+
+component_examples = {
+    "Diode": "• Einweggleichrichter\n• Freilaufdiode bei Motoren",
+    "Induktor": "• DC-DC-Wandler\n• LC-Filter",
+    "Kondensator": "• Netzteil-Glättung\n• Timer-Schaltungen",
+    "LED": "• Leuchtanzeigen\n• Arduino-Projekte",
+    "Transformator": "• Steckernetzteile\n• Spannungswandlung",
+    "Transistor": "• Signalverstärker\n• Motorsteuerung",
+    "Widerstand": "• Spannungsteiler\n• LED-Strombegrenzung"
+}
 
 # ====================== FARBRING RECHNER ======================
 color_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Violett", "Grau", "Weiß"]
@@ -149,7 +133,7 @@ color_values = {"Schwarz":0, "Braun":1, "Rot":2, "Orange":3, "Gelb":4, "Grün":5
 multiplier_options = ["— Ignorieren —", "Schwarz", "Braun", "Rot", "Orange", "Gelb", "Grün", "Blau", "Gold", "Silber"]
 tolerance_options = ["— Ignorieren —", "Gold (±5%)", "Silber (±10%)", "Braun (±1%)", "Rot (±2%)"]
 
-# ====================== UPLOAD & ANALYSE ======================
+# ====================== HAUPTBEREICH ======================
 uploaded_file = st.file_uploader("**UPLOAD IMAGE TO ANALYZE**", type=["jpg", "jpeg", "png", "webp"])
 
 if uploaded_file is not None:
@@ -178,10 +162,12 @@ if uploaded_file is not None:
     </div>
     """, unsafe_allow_html=True)
 
+    # Hacker-Boxes
     col1, col2 = st.columns([1, 1])
     with col1:
         st.subheader("TECHNISCHE SPEZIFIKATION")
         st.markdown(f'<div class="hacker-box">{component_info.get(predicted_label, "Daten nicht verfügbar.")}</div>', unsafe_allow_html=True)
+    
     with col2:
         st.subheader("PRAKTISCHE ANWENDUNGEN")
         st.markdown(f'<div class="hacker-box">{component_examples.get(predicted_label, "Keine Daten.")}</div>', unsafe_allow_html=True)
@@ -190,7 +176,6 @@ if uploaded_file is not None:
     if predicted_label == "Widerstand":
         st.subheader("🎨 WIDERSTANDS-FARBRING DECODER")
         band_count = st.radio("Anzahl der Farbringe", [4, 5, 6], horizontal=True, key="band_count")
-        
         cols = st.columns(6)
         b1 = cols[0].selectbox("Band 1", color_options, index=1, key="b1")
         b2 = cols[1].selectbox("Band 2", color_options, index=1, key="b2")
@@ -198,10 +183,7 @@ if uploaded_file is not None:
         b_mult = cols[3].selectbox("Multiplikator", multiplier_options, index=1, key="b_mult")
         b_tol = cols[4].selectbox("Toleranz", tolerance_options, index=1, key="b_tol")
         
-        if band_count == 6:
-            b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6")
-        else:
-            b6 = "— Ignorieren —"
+        b6 = cols[5].selectbox("Band 6", ["— Ignorieren —", "Braun (100 ppm)", "Rot (50 ppm)"], index=0, key="b6") if band_count == 6 else "— Ignorieren —"
 
         if st.button("🔢 DECODE RESISTANCE", type="primary"):
             try:
@@ -233,14 +215,14 @@ if uploaded_file is not None:
 
 else:
     st.markdown("""
-        <div class="hacker-box" style="text-align:center; padding:60px;">
+        <div class="hacker-box" style="text-align:center; padding:60px; margin-top:30px;">
             <h2>> NEURAL INTERFACE ONLINE</h2>
             <p>> WAITING FOR TARGET IMAGE UPLOAD...</p>
             <p>> SYSTEM READY FOR BREACH</p>
         </div>
     """, unsafe_allow_html=True)
 
-# Sidebar
+# ====================== SIDEBAR ======================
 with st.sidebar:
     st.markdown("**NEON VOID v1.337**")
     st.write(f"**ACTIVE TARGET CLASSES:** {len(class_names)}")
